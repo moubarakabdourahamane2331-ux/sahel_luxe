@@ -1,22 +1,64 @@
-// SAHEL LUXE COMPLET - TikTok + WhatsApp + Shop + Monetisation Internationale
-let cart=[], cartTotalPrice=0, isRecording=false;
-let products={homme:[{n:"Boubou Homme Doré",p:25000},{n:"Boubou Blanc",p:30000},{n:"Ensemble Sahel",p:28000},{n:"Tunique Niger",p:22000},{n:"Costume Bazin",p:35000}],femme:[{n:"Robe Wax",p:20000},{n:"Bazin Rose",p:35000},{n:"Robe Mariage",p:50000},{n:"Ensemble Femme",p:28000},{n:"Voile Robe",p:32000}],voiture:[{n:"Toyota Hilux",p:15000000},{n:"Corolla",p:8000000},{n:"Moto KTM",p:1200000},{n:"Moto Haojue",p:850000},{n:"Tricycle",p:2500000},{n:"RAV4",p:12000000},{n:"Camion",p:20000000}],bazin:[{n:"Bazin Bleu",p:45000},{n:"Bazin Violet",p:50000},{n:"Bazin Or",p:55000},{n:"Bazin Rouge",p:60000},{n:"Bazin Vert",p:45000},{n:"Bazin Blanc",p:50000},{n:"Bazin Noir",p:48000},{n:"Bazin Getzner",p:70000},{n:"Bazin Damask",p:65000},{n:"Bazin Super",p:75000}],montre:[{n:"Montre Or",p:25000},{n:"Montre Connectée",p:35000},{n:"Tecno Camon",p:95000},{n:"iPhone 13",p:350000},{n:"Samsung S23",p:280000},{n:"AirPods",p:40000}]};
+// SAHEL LUXE V3 - TikTok+WhatsApp Vocal+Video+Shop+Statut Story+Money 70%
+let cart=[], total=0, subs=1241, views=15500;
+let videos=[
+{t:"Nouveau Bazin Tahoua 🔥",l:1200,u:"Aminou",p:"HOMME",price:25000},
+{t:"Hilux 2024 dispo",l:890,u:"Moussa Auto",p:"VOITURE",price:8500000},
+{t:"Montre Or Dubai",l:2100,u:"Sahel Luxe",p:"MONTRE",price:45000}
+];
+let shops=[
+{n:"Bazin Riche 5m",p:25000,c:"HOMME",i:"👘"},{n:"Boubou Femme",p:30000,c:"FEMME",i:"👗"},
+{n:"Hilux",p:8500000,c:"VOITURE",i:"🚙"},{n:"Bazin Getzner",p:40000,c:"BAZIN",i:"✨"},
+{n:"Rolex",p:45000,c:"MONTRE",i:"⌚"}
+];
+let statuses=JSON.parse(localStorage.getItem('sahel_status')||'[]');
+let chatMsgs=JSON.parse(localStorage.getItem('sahel_chat')||'[]');
 
-function showTab(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active');document.getElementById('b'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active');if(t==='commerce')showCommerceCat('homme');if(t==='videos')loadVideos();}
-
-function showCommerceCat(cat){let d=document.getElementById('commerceProducts');d.innerHTML=`<h3 style="color:gold">${cat.toUpperCase()} - ${products[cat].length} Produits</h3>`;products[cat].forEach(pr=>{d.innerHTML+=`<div class="product"><div style="background:#222;height:100px;display:flex;align-items:center;justify-content:center;border-radius:8px">📦 ${pr.n}</div><h4>${pr.n}</h4><p style="color:gold">${pr.p.toLocaleString()} FCFA</p><button onclick="addToCart('${pr.n}',${pr.p})" style="width:100%;padding:8px;background:gold;color:#000;font-weight:bold;border-radius:6px">🛒 ACHETER + PAYER DEDANS</button></div>`;});}
-function addToCart(n,p){cart.push({n,p});cartTotalPrice+=p;document.getElementById('cartCount').innerText=cart.length;document.getElementById('cartTotal').innerText=cartTotalPrice.toLocaleString();}
-function checkout(){if(!cart.length)return alert("Panier vide!");let msg=`SAHEL LUXE CMD%0A`;cart.forEach(c=>msg+=`${c.n} ${c.p} FCFA%0A`);msg+=`TOTAL ${cartTotalPrice} AVANCE 50% ${cartTotalPrice/2}`;window.open(`https://wa.me/22797028392?text=${msg}`,'_blank');alert("Paiement international: Stripe + Mobile Money activé! Avance 50% envoyée au 97028392");}
-
-// WHATSAPP COMPLET - MESSAGE + VOCAL + APPEL VIDEO
-function sendMessage(){let i=document.getElementById('chatInput');if(!i.value)return;let l=document.getElementById('chatList');l.innerHTML+=`<div style="background:gold;color:#000;padding:8px;border-radius:12px;margin:5px 0;text-align:right;margin-left:20%">${i.value} ✓✓</div>`;i.value='';l.scrollTop=l.scrollHeight;}
-function sendVocal(){let l=document.getElementById('chatList');if(!isRecording){isRecording=true;document.getElementById('btnVocal').innerText='⏹️ Stop';l.innerHTML+=`<div style="background:#222;padding:8px;border-radius:8px;margin:5px 0"><i>🎙️ Enregistrement vocal... 0:03</i></div>`;}else{isRecording=false;document.getElementById('btnVocal').innerText='🎙️ Vocal';l.innerHTML+=`<div style="background:gold;color:#000;padding:8px;border-radius:12px;margin:5px 0;text-align:right;margin-left:20%">🎙️ Vocal 0:03 ▶️ ✓✓</div>`;}}
-function videoCall(){alert("📹 Appel vidéo SAHEL LUXE lancé! Connexion... (WebRTC activé pour Afrique + Europe + USA)");document.getElementById('chatList').innerHTML+=`<div style="background:#111;border:1px solid gold;padding:10px;border-radius:10px;margin:10px 0;text-align:center">📹 Appel vidéo en cours avec Support Tahoua<br><div style="background:#000;height:100px;display:flex;align-items:center;justify-content:center;margin:5px">CAMERA ACTIVE</div><button onclick="alert('Appel terminé')" style="background:red;color:#fff;padding:8px;border-radius:6px">🔴 Raccrocher</button></div>`;}
-
-// TIKTOK COMPLET
-let vids=[{t:"Nouveau Bazin Tahoua 🔥 #bazin",v:"12.4k",u:"@sahel_luxe",likes:"1.2k"},{t:"Voiture Hilux à vendre Tahoua #voiture #niger",v:"8.9k",u:"@auto_tahoua",likes:"890"},{t:"Montre connectée disponible #shop",v:"15.6k",u:"@luxe_niger",likes:"2.1k"}];
-function loadVideos(){let f=document.getElementById('videoFeed');f.innerHTML='';vids.forEach((v,i)=>{f.innerHTML+=`<div class="videoCard"><div style="height:350px;background:linear-gradient(45deg,#111,#333);display:flex;align-items:center;justify-content:center;flex-direction:column"><span style="font-size:60px">▶️</span><p>${v.t}</p><p style="font-size:10px;color:gold">TIKTOK STYLE - SWIPE UP</p></div><div style="padding:10px;display:flex;justify-content:space-between"><div><b>${v.u}</b><br><span style="font-size:12px">${v.t}</span></div><div style="text-align:center"><div>❤️<br>${v.likes}</div><div>💬<br>340</div><div>💰<br>Shop</div></div></div><div style="display:flex;gap:5px;padding:0 10px 10px"><button onclick="likeVideo(${i})" style="flex:1;background:#222;color:#fff;padding:6px;border-radius:6px">❤️ Like</button><button onclick="showTab('commerce')" style="flex:1;background:gold;color:#000;padding:6px;border-radius:6px;font-weight:bold">🛒 Acheter</button></div></div>`;});}
-function likeVideo(i){vids[i].likes=parseInt(vids[i].likes)+1+"k";alert("Tu as liké! +1 abonnement pour monétisation!");let s=parseInt(document.getElementById('mySubs').innerText);document.getElementById('mySubs').innerText=s+1;loadVideos();}
-function postVideo(){let t=document.getElementById('videoTitle').value;if(!t)return alert("Titre!");vids.unshift({t:t,v:"0",u:"@toi",likes:"0"});alert("🎉 Vidéo TikTok postée! Afrique + Europe + USA peuvent voir! +100 vues +1 subs pour tes 10k/100k");document.getElementById('videoTitle').value='';let vv=parseInt(document.getElementById('myViews').innerText)+100;document.getElementById('myViews').innerText=vv;if(vv>=100000&&parseInt(document.getElementById('mySubs').innerText)>=10000){document.getElementById('btnMonetize').disabled=false;document.getElementById('btnMonetize').style.background='gold';document.getElementById('btnMonetize').style.color='#000';document.getElementById('btnMonetize').innerText='💰 DEMANDER MONÉTISATION 70% - INTERNATIONAL OK!';}}
-function requestMonetization(){alert("Félicitations! 10k subs + 100k vues atteints! SAHEL LUXE Monétisation 70% activée! Paiement international via Stripe + Orange Money. Contact 97028392 pour contrat Europe/USA/Afrique!");}
-showCommerceCat('homme');
+function showTab(t){
+document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+document.querySelectorAll('.navBtn').forEach(x=>x.classList.remove('active'));
+document.getElementById('tab'+t).classList.add('active');
+event.target.classList.add('active');
+if(t=='Videos') renderVideos();
+if(t=='Shop') renderShop();
+if(t=='Status') renderStatus();
+if(t=='Chat') renderChat();
+}
+function renderVideos(){
+document.getElementById('videoFeed').innerHTML=videos.map((v,i)=>`
+<div class="videoCard"><div class="videoArea"><div style="font-size:50px">▶️</div><b>${v.t}</b><small>@${v.u} - ${v.p}</small></div>
+<div style="display:flex;gap:5px;padding:10px"><button class="navBtn" onclick="likeVideo(${i})">❤️ ${v.l}</button><button class="navBtn" style="background:gold;color:#000" onclick="buyVideo(${i})">ACHETER ${v.price} FCFA</button></div></div>
+`).join('');
+}
+function likeVideo(i){videos[i].l++; renderVideos(); views+=100; updateMoney();}
+function buyVideo(i){let v=videos[i]; cart.push(v); total+=v.price; document.getElementById('cartCount').innerText=cart.length; alert(v.t+' ajoute au panier!');}
+function renderShop(){
+document.getElementById('shopList').innerHTML=shops.map(s=>`
+<div style="background:#111;border:1px solid #333;border-radius:12px;padding:10px;margin-bottom:10px;display:flex;gap:10px"><div style="font-size:40px">${s.i}</div><div style="flex:1"><b>${s.n}</b><br>${s.c}<br><b style="color:gold">${s.p} FCFA</b></div><button onclick="addCart('${s.n}',${s.p})" style="background:gold;color:#000;padding:8px 12px;border-radius:8px;font-weight:bold;border:none">+</button></div>
+`).join('');
+}
+function addCart(n,p){cart.push({n,p}); total+=p; document.getElementById('cartCount').innerText=cart.length; }
+function filterShop(c){let f=shops.filter(s=>s.c==c); document.getElementById('shopList').innerHTML=f.map(s=>`<div style="background:#111;padding:10px;margin-bottom:8px;border-radius:8px">${s.i} ${s.n} - ${s.p} FCFA <button onclick="addCart('${s.n}',${s.p})" style="background:gold">+</button></div>`).join('');}
+function payer(){if(cart.length==0){alert('Panier vide!');return;} alert('Commande '+total+' FCFA envoyee au 97028392! Avance 50% Orange Money.'); cart=[]; total=0; document.getElementById('cartCount').innerText=0;}
+function createPost(){let t=document.getElementById('postTitle').value; if(!t)return alert('Titre vide!'); videos.unshift({t:t,l:0,u:"Toi",p:"HOMME",price:25000}); document.getElementById('postTitle').value=''; alert('Video postee!'); showTab('Videos'); renderVideos();}
+function renderChat(){document.getElementById('chatList').innerHTML=chatMsgs.map(m=>`<div style="background:${m.me?'gold':'#222'};color:${m.me?'#000':'#fff'};padding:8px;border-radius:10px;margin:5px;max-width:80%;${m.me?'margin-left:auto':''}">${m.t}</div>`).join('');}
+function sendMessage(){let i=document.getElementById('chatInput'); if(!i.value)return; chatMsgs.push({t:i.value,me:true}); localStorage.setItem('sahel_chat',JSON.stringify(chatMsgs)); i.value=''; renderChat();}
+function sendVocal(){chatMsgs.push({t:"🎙️ Message vocal 0:12",me:true}); localStorage.setItem('sahel_chat',JSON.stringify(chatMsgs)); renderChat(); alert('Vocal envoye! (Simule) - Vrai vocal arrive V4');}
+function videoCall(){alert('📹 Appel video lance vers 97028392! (Simule) - Vrai appel V4 avec WebRTC');}
+// NOUVEAU STATUT WHATSAPP
+function renderStatus(){
+let now=Date.now();
+statuses=statuses.filter(s=>now-s.time<86400000);
+localStorage.setItem('sahel_status',JSON.stringify(statuses));
+let bar=document.getElementById('storyBar');
+bar.innerHTML='<div class="storyItem" onclick="document.getElementById(\'tabStatus\').scrollIntoView()"><div class="storyRing" style="border-style:dashed"><div style="width:100%;height:100%;background:#222;border-radius:50%;display:flex;align-items:center;justify-content:center">+</div></div><small>Mon statut</small></div>'+statuses.map((s,i)=>`<div class="storyItem" onclick="viewStatus(${i})"><div class="storyRing"><img src="https://i.pravatar.cc/100?u=${s.u}"></div><small>${s.u}</small></div>`).join('');
+document.getElementById('statusList').innerHTML=statuses.map((s,i)=>`
+<div class="statusCard"><div style="display:flex;gap:8px;align-items:center"><img src="https://i.pravatar.cc/40?u=${s.u}" style="width:35px;height:35px;border-radius:50%"><b>${s.u}</b><small style="color:#aaa">il y a ${Math.floor((now-s.time)/60000)}min</small></div><p style="margin:8px 0">${s.t}</p><div style="display:flex;gap:5px"><button onclick="likeStatus(${i})" style="background:#222;color:#fff;padding:6px 10px;border-radius:15px;border:none">❤️ ${s.likes||0}</button><button onclick="replyStatus(${i})" style="background:#222;color:#fff;padding:6px 10px;border-radius:15px;border:none">💬 Repondre</button></div></div>
+`).join('')||'<p style="color:#777;text-align:center;margin-top:20px">Aucun statut. Sois le premier!</p>';
+}
+function addStatus(){let t=document.getElementById('statusText').value; if(!t)return alert('Ecris statut!'); statuses.unshift({t:t,u:"Toi",time:Date.now(),likes:0}); localStorage.setItem('sahel_status',JSON.stringify(statuses)); document.getElementById('statusText').value=''; renderStatus(); alert('Statut poste! Disparait dans 24h comme WhatsApp!');}
+function viewStatus(i){let s=statuses[i]; alert('STATUT de '+s.u+':\n\n'+s.t+'\n\n👁️ Vu - Reponds dans Chat!');}
+function likeStatus(i){statuses[i].likes=(statuses[i].likes||0)+1; localStorage.setItem('sahel_status',JSON.stringify(statuses)); renderStatus();}
+function replyStatus(i){showTab('Chat'); document.getElementById('chatInput').value='Re: '+statuses[i].t; }
+function updateMoney(){document.getElementById('subCount').innerText=subs; document.getElementById('viewCount').innerText=views;}
+// init
+renderVideos(); renderShop(); renderChat(); renderStatus(); updateMoney();
