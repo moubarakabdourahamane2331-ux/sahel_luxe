@@ -1,75 +1,77 @@
-// SAHEL V30 - VRAIE IA ChatGPT qui sait parler!
-const SAHEL_PROMPT = "Tu es SAHEL V30, assistant nigérien comme ChatGPT, chaleureux, drôle, expert C1 5k à C6 35k, Tafsir, Bazin luxe. Tu réponds naturellement. Si on te dit Bonsoir, réponds Bonsoir avec chaleur. Si on dit Comment tu vas, dis que ça va bien.";
+// SAHEL V30 2026 - VRAIE IA ChatGPT PRO MAX
+const SYS = "Tu es SAHEL V30 2026, IA nigérienne, chaleureuse, drôle, comme ChatGPT-4. Tu ne répètes jamais la question. Tu réponds naturellement. Tu es expert BEPC à BAC+9, Tafsir, Bazin luxe, Dubaï.";
 
-async function initV30(){
+let hist = [];
+
+function initV30(){
   const z=document.getElementById('chat-zone');
+  if(!z) return;
   z.innerHTML='';
-  addMsg("Salam Chef! 👋 V30 VRAIE IA lancée!\n\nMaintenant je sais quoi dire!\n• Dis 'Bonsoir' -> je te réponds bien\n• Dis 'Comment tu vas' -> je parle comme un humain\n• Dis 'Cours électricité C3' -> vrai cours\n\nTeste-moi!",'bot');
+  add("Salam Chef! 👋 V30 2026 activée!\n\nJe suis enfin intelligente! Teste:\n• Bonsoir\n• Comment tu vas\n• Cours C3 électricité\n• Tafsir Ikhlas\n\nJe réponds comme ChatGPT maintenant!",'bot');
 }
-function addMsg(t,r){
+function add(t,r){
   const z=document.getElementById('chat-zone');
   const d=document.createElement('div');
-  d.style.cssText=r==='user'?'align-self:flex-end;background:#facc15;color:#000;padding:14px;border-radius:20px 20px 0 20px;max-width:85%;white-space:pre-wrap;font-weight:600':'align-self:flex-start;background:#222;color:#fff;padding:14px;border-radius:20px 20px 20px 0;max-width:85%;border:1px solid #facc15;white-space:pre-wrap;line-height:1.6';
+  d.style.cssText=r==='user'?'align-self:flex-end;background:#facc15;color:#000;padding:14px 18px;border-radius:20px 20px 0 20px;max-width:85%;white-space:pre-wrap;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.3)':'align-self:flex-start;background:#1e293b;color:#fff;padding:14px 18px;border-radius:20px 20px 20px 0;max-width:85%;border:1px solid #facc15;white-space:pre-wrap;line-height:1.7';
   d.textContent=t; z.appendChild(d); z.scrollTop=z.scrollHeight;
 }
 
 async function envoyerMessage(){
   const inp=document.getElementById('userInput');
   const q=inp.value.trim(); if(!q) return;
-  inp.value=''; addMsg(q,'user');
-  const t=document.createElement('div'); t.id='typing'; t.textContent='✍️ V30 réfléchit comme ChatGPT...';
-  t.style.cssText='align-self:flex-start;background:#111;color:#aaa;padding:10px;border-radius:10px;font-style:italic';
-  document.getElementById('chat-zone').appendChild(t);
+  inp.value=''; add(q,'user');
+  hist.push(q);
+  const typ=document.createElement('div'); typ.id='typing';
+  typ.textContent='✍️ V30 2026 écrit...';
+  typ.style.cssText='align-self:flex-start;background:#0f172a;color:#facc15;padding:10px 14px;border-radius:12px;font-size:13px;border:1px dashed #facc15';
+  document.getElementById('chat-zone').appendChild(typ);
 
   try{
-    // V30 utilise GET qui marche partout en Afrique, sans blocage CORS
-    const fullPrompt = SAHEL_PROMPT + "\n\nUtilisateur: " + q + "\nAssistant:";
-    const url = "https://text.pollinations.ai/" + encodeURIComponent(fullPrompt) + "?model=openai-large&seed=" + Date.now();
-    const res = await fetch(url, {method:"GET"});
-    if(!res.ok) throw new Error('api');
-    let txt = await res.text();
-    txt = txt.replace(SAHEL_PROMPT,'').replace('Utilisateur:','').replace('Assistant:','').trim();
+    // API V30 2026 - GET marche 100% au Niger, sans clé
+    const prompt = SYS + "\n\nConversation: " + hist.slice(-4).join(" | ") + "\n\nUser: " + q;
+    const url = "https://text.pollinations.ai/" + encodeURIComponent(prompt);
+    const ctrl = new AbortController();
+    const timeout = setTimeout(()=>ctrl.abort(), 12000);
+    const res = await fetch(url, {signal: ctrl.signal});
+    clearTimeout(timeout);
+    let ans = await res.text();
+    ans = ans.replace(SYS,'').trim();
+    if(ans.length < 2) throw new Error('vide');
     document.getElementById('typing')?.remove();
-    if(txt.length < 3) throw new Error('vide');
-    typeWriter(txt);
+    type(ans);
   }catch(e){
     document.getElementById('typing')?.remove();
-    typeWriter(bonneReponseLocale(q));
+    type(localSmart(q));
   }
 }
 
-function typeWriter(text){
+function type(txt){
   const z=document.getElementById('chat-zone');
   const d=document.createElement('div');
-  d.style.cssText='align-self:flex-start;background:#222;color:#fff;padding:14px;border-radius:20px 20px 20px 0;max-width:85%;border:1px solid #facc15;white-space:pre-wrap;line-height:1.6';
+  d.style.cssText='align-self:flex-start;background:#1e293b;color:#fff;padding:14px 18px;border-radius:20px 20px 20px 0;max-width:85%;border:1px solid #facc15;white-space:pre-wrap;line-height:1.7';
   z.appendChild(d); let i=0;
-  const iv=setInterval(()=>{ d.textContent=text.slice(0,i++); z.scrollTop=z.scrollHeight; if(i>text.length) clearInterval(iv); },12);
+  const iv=setInterval(()=>{ d.textContent=txt.slice(0,i++); z.scrollTop=z.scrollHeight; if(i>txt.length) clearInterval(iv); },9);
 }
 
-function bonneReponseLocale(q){
+function localSmart(q){
   const l=q.toLowerCase();
-  if(l.includes('bonsoir')||l.includes('bonjour')||l.includes('salam')){
-    return "Bonsoir Chef! 👋 Wa salam! Ça fait plaisir de te voir!\n\nComment tu vas? Tu veux qu'on bosse sur quoi ce soir? Un cours C1 à C6, un Tafsir, ou habillage Bazin luxe?";
-  }
-  if(l.includes('comment tu vas')||l.includes('cv')||l.includes('ça va')){
-    return "Alhamdoulillah Chef, je vais très bien! 😊 Merci! Et toi, comment tu vas? La famille va bien?\n\nJe suis chaud pour t'aider. Tu veux apprendre quoi aujourd'hui?";
-  }
-  if(l.includes('ok')||l==='oui'){
-    return "Parfait! 👍 Alors on y va! Dis-moi juste:\n1. Ton niveau (C1 à C6)\n2. Ce que tu veux faire\n\nEt je te lance le cours direct comme ChatGPT!";
-  }
-  if(l.includes('tafsir')) return "Tafsir gratuit V30: Donne-moi la sourate (ex: Fatiha, Baqara, Ikhlas) et je t'explique en français simple + leçon pour ta vie au Niger.";
-  if(l.includes('bazin')||l.includes('habill')) return "Bazin V30 luxe! Dis couleur: 'Bazin bleu roi + Dubaï' ou 'Vert-or forêt' et envoie photo, je te fais rendu mariage!";
-  if(l.includes('electric')||l.includes('plomber')||l.includes('c1')||l.includes('c3')) return `Cours V30: "${q}" - Super choix!\n\nÉtape 1: Base simple\nÉtape 2: Exercice pratique Niger\nÉtape 3: Vidéo YouTube pour devenir pro\n\nTu veux le PDF complet C1 à C6?`;
-  return `Ah oui Chef! "${q}"\n\nJe comprends! Explique-moi un peu plus et je te réponds comme ChatGPT avec exemple concret du Niger.`;
+  if(l.match(/bonsoir|bonjour|salam|salut/)) return "Bonsoir mon Chef! 👋 Wa aleykoum salam! Ça fait plaisir!\n\nComment va la soirée à Niamey? Tu veux qu'on apprenne quelque chose ou on discute Bazin / Tafsir?";
+  if(l.match(/comment.*vas|ca va|cv|sava/)) return "Alhamdoulillah je vais super bien Chef! 😊 Et toi? La santé? Le business SAHEL LUXE avance?\n\nDis-moi, tu veux cours C1 à C6, Tafsir ou habillage vidéo aujourd'hui?";
+  if(l.match(/^ok$|^daccord$|^oui$/)) return "Top! On y va Chef! 🚀 Donne-moi juste ton idée et je te fais ça direct style ChatGPT.";
+  if(l.includes('tafsir')) return "Tafsir V30 2026 gratuit 📖: Quelle sourate? Ex: Fatiha, Ikhlas, Nas. Je t'explique en 3 points simples + application pour ta vie.";
+  if(l.includes('bazin')||l.includes('habill')) return "Bazin Luxe V30 2026 ✨: Dis couleur + lieu. Ex: 'Bazin vert-or royal à Dubaï' ou 'Bleu roi mariage'. Envoie photo!";
+  if(l.includes('cours')||l.match(/c[1-6]|bepc|bac|plomber|electr/)) return `Cours "${q}" V30 2026 🎓:\n\nVoilà le plan pro:\n1. Base simple expliquée\n2. Exemple concret Niger\n3. Exercice pratique difficile\n4. Vidéo YouTube conseillée\n\nTu es en quel niveau? C1 5k, C3 15k ou C6 35k?`;
+  return `Bien noté Chef! Pour "${q}", je suis là!\n\nExplique-moi un peu plus ton objectif et je te donne réponse complète comme ChatGPT, avec exemple nigérien.`;
 }
-function clearChat(){ initV30(); }
-function partagerEcran(){ addMsg('🖥️ Partage ton écran, je t\'aide!','bot'); }
-function ouvrirCamera(){ addMsg('📷 Montre avec caméra!','bot'); }
-function videoHabillage(){ addMsg('🎬 Tape "Bazin rouge mariage Dubaï" + photo!','bot'); }
+
+function clearChat(){ hist=[]; initV30(); }
+function partagerEcran(){ add('🖥️ Partage écran V30 prêt!','bot'); }
+function ouvrirCamera(){ add('📷 Caméra V30 prête!','bot'); }
+function videoHabillage(){ add('🎬 Habillage V30: Tape ta couleur Bazin!','bot'); }
 function voiceContinue(){
   const R=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!R){ addMsg('🎤 Écris ta question Chef!','bot'); return; }
-  const r=new R(); r.lang='fr-FR'; r.start(); addMsg('🎤 J\'écoute...','bot');
+  if(!R){ add('🎤 Tape ta question!','bot'); return; }
+  const r=new R(); r.lang='fr-FR'; r.start(); add('🎤 J\'écoute...','bot');
   r.onresult=e=>{ document.getElementById('userInput').value=e.results[0][0].transcript; envoyerMessage(); };
 }
-window.onload=initV30; setTimeout(initV30,600);
+window.onload=initV30; setTimeout(initV30,700);
