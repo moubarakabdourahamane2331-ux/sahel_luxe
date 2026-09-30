@@ -1,20 +1,64 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SAHEL LUXE</title>
+<title>SAHEL LUXE V3 - Statut+Story</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{background:#000;color:#fff;font-family:Arial}nav{display:flex;gap:2px;padding:5px;background:#111;position:fixed;bottom:0;width:100%}nav button{flex:1;padding:10px;background:#222;color:#fff;border:none;border-radius:8px;font-size:9px}nav button.active{background:gold;color:#000;font-weight:bold}.tab{padding:10px;padding-bottom:70px;display:none}.tab.active{display:block}.product{background:#111;margin:6px 0;padding:8px;border-radius:8px;border:1px solid #333}input{width:100%;padding:10px;background:#222;border:1px solid #333;color:#fff;border-radius:8px;margin:5px 0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:Arial;padding-bottom:85px}
+.header{background:linear-gradient(90deg,gold,#ffcc00);color:#000;text-align:center;padding:12px;font-weight:bold;position:sticky;top:0;z-index:100}
+.tab{display:none;padding:10px}.tab.active{display:block}
+.storyBar{display:flex;gap:10px;overflow-x:auto;padding:10px 0}
+.storyItem{text-align:center;min-width:70px}
+.storyRing{width:60px;height:60px;border-radius:50%;border:3px solid gold;padding:2px}
+.storyRing img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.storyRing.viewed{border-color:#555}
+.statusCard{background:#111;border-radius:12px;padding:10px;margin-bottom:10px;border-left:3px solid gold}
+.videoCard{background:#111;margin-bottom:15px;border-radius:12px;border:1px solid #333;overflow:hidden}
+.videoArea{background:#222;height:380px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#111;display:flex;padding:6px;border-top:2px solid gold;z-index:100}
+.navBtn{background:#222;color:#fff;border:none;padding:6px;border-radius:8px;flex:1;margin:2px;font-size:11px}
+.navBtn.active{background:gold;color:#000;font-weight:bold}
 </style>
 </head>
 <body>
-<div id="tabChat" class="tab active"><h2 style="color:gold;text-align:center;padding:10px">💬 CHAT SAHEL LUXE</h2><div id="chatList" style="height:300px;overflow:auto;background:#111;border-radius:8px;padding:5px"></div><div style="display:flex;gap:5px"><input id="chatInput" placeholder="Message..."><button onclick="sendMessage()" style="background:gold;color:#000;padding:10px 15px;border-radius:8px">Envoyer</button></div></div>
-<div id="tabVideos" class="tab"><h2 style="color:gold;text-align:center">🎵 TIKTOK SAHEL</h2><div id="videoFeed"></div></div>
-<div id="tabCommerce" class="tab"><h2 style="color:gold;text-align:center">🛒 BOUTIQUE 97028392</h2><div style="display:flex;gap:3px;overflow:auto"><button onclick="showCommerceCat('homme')" style="background:gold;color:#000;padding:6px;border-radius:6px">HOMME</button><button onclick="showCommerceCat('femme')" style="background:#222;color:#fff;padding:6px;border-radius:6px">FEMME</button><button onclick="showCommerceCat('voiture')" style="background:#222;color:#fff;padding:6px;border-radius:6px">VOITURE</button><button onclick="showCommerceCat('bazin')" style="background:#222;color:#fff;padding:6px;border-radius:6px">BAZIN</button><button onclick="showCommerceCat('montre')" style="background:#222;color:#fff;padding:6px;border-radius:6px">MONTRE</button></div><div id="commerceProducts"></div><div style="position:fixed;bottom:60px;right:10px;background:gold;color:#000;padding:8px;border-radius:10px">🛒 <span id="cartCount">0</span> | <span id="cartTotal">0</span> <button onclick="checkout()" style="background:#000;color:gold;padding:4px;border-radius:5px">PAYER</button></div></div>
-<div id="tabMoney" class="tab"><h2 style="color:gold;text-align:center">💰 MONEY 70%</h2><p>Subs: <b id="mySubs">1240</b>/10000</p><div style="background:#222;height:10px;border-radius:5px"><div id="progressSubs" style="background:gold;height:10px;width:12%"></div></div><p>Vues: <b id="myViews">15400</b>/100000</p><div style="background:#222;height:10px;border-radius:5px"><div id="progressViews" style="background:gold;height:10px;width:15%"></div></div><button id="btnMonetize" disabled onclick="requestMonetization()" style="width:100%;margin-top:15px;padding:12px;background:#444;color:#fff;border-radius:8px">🔒 Atteins 10k + 100k</button></div>
-<div id="tabPost" class="tab"><h2 style="color:gold;text-align:center">➕ POSTER</h2><input id="videoTitle" placeholder="Titre vidéo"><button onclick="postVideo()" style="width:100%;padding:12px;background:gold;color:#000;border-radius:8px;margin-top:10px">📤 POSTER</button></div>
-<nav><button id="bChat" class="active" onclick="showTab('chat')">💬<br>Chat</button><button id="bVideos" onclick="showTab('videos')">🎵<br>Videos</button><button id="bCommerce" onclick="showTab('commerce')">🛒<br>Shop</button><button id="bMoney" onclick="showTab('money')">💰<br>Money</button><button id="bPost" onclick="showTab('post')">➕<br>Post</button></nav>
+<div class="header">SAHEL LUXE V3 🌟 Statut+Story 97028392</div>
+
+<div id="tabChat" class="tab active">
+<h3 style="color:gold">💬 CHAT + 🎙️ + 📹</h3>
+<div id="chatList" style="height:50vh;overflow-y:auto;background:#111;padding:10px;border-radius:10px;margin:10px 0"></div>
+<div style="display:flex;gap:4px">
+<input id="chatInput" placeholder="Message..." style="flex:1;padding:12px;background:#222;color:#fff;border:1px solid #444;border-radius:8px">
+<button onclick="sendVocal()" style="background:#222;color:#fff;padding:10px;border-radius:8px">🎙️</button>
+<button onclick="videoCall()" style="background:#222;color:#fff;padding:10px;border-radius:8px">📹</button>
+<button onclick="sendMessage()" style="background:gold;color:#000;padding:10px 15px;border-radius:8px;font-weight:bold">OK</button>
+</div>
+</div>
+
+<div id="tabStatus" class="tab">
+<h3 style="color:gold">⭕ STATUT WHATSAPP (24h)</h3>
+<div class="storyBar" id="storyBar"></div>
+<div style="background:#111;padding:12px;border-radius:10px;margin:10px 0">
+<input id="statusText" placeholder="Ton statut... ex: Nouveau bazin arrive!" style="width:100%;padding:12px;background:#222;color:#fff;border:1px solid #444;border-radius:8px;margin-bottom:8px">
+<button onclick="addStatus()" style="width:100%;padding:12px;background:gold;color:#000;font-weight:bold;border-radius:8px">+ POSTER STATUT</button>
+</div>
+<div id="statusList"></div>
+</div>
+
+<div id="tabVideos" class="tab"><div id="videoFeed"></div></div>
+<div id="tabShop" class="tab"><div id="shopList"></div><div style="position:fixed;bottom:85px;right:10px;background:gold;color:#000;padding:10px;border-radius:20px">🛒 <span id="cartCount">0</span> <button onclick="payer()">PAYER</button></div></div>
+<div id="tabMoney" class="tab"><h3 style="color:gold;text-align:center">💰 MONEY 70% - 10k + 100k vues</h3><p>Subs: <span id="subCount">1241</span>/10000</p><div style="background:#333;height:12px;border-radius:10px"><div style="background:gold;height:100%;width:12%"></div></div><p>Vues: <span id="viewCount">15500</span>/100000</p><div style="background:#333;height:12px;border-radius:10px"><div style="background:gold;height:100%;width:15%"></div></div></div>
+<div id="tabPost" class="tab"><input id="postTitle" placeholder="Titre video TikTok"><button onclick="createPost()" style="width:100%;padding:15px;background:gold;color:#000;font-weight:bold;border-radius:10px;margin-top:10px">POSTER VIDEO</button></div>
+
+<div class="bottomNav">
+<button class="navBtn active" onclick="showTab('Chat')">Chat</button>
+<button class="navBtn" onclick="showTab('Status')">⭕ Statut</button>
+<button class="navBtn" onclick="showTab('Videos')">Videos</button>
+<button class="navBtn" onclick="showTab('Shop')">Shop</button>
+<button class="navBtn" onclick="showTab('Money')">Money</button>
+<button class="navBtn" onclick="showTab('Post')">Post</button>
+</div>
 <script src="app.js"></script>
 </body>
 </html>
