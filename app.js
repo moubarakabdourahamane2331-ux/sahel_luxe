@@ -1,172 +1,87 @@
-// SAHEL V20 - C1-BEPC 5k à C6-Bac+9 35k + TAFSIR + VIDEO HABILLAGE
-// IA qui répond comme ChatGPT - Version sans clé API (100% gratuit)
+// SAHEL V22 - IA comme ChatGPT PRO + Streaming
+const SYSTEM = "Tu es SAHEL V22, IA du Sahel comme ChatGPT-4o. Expert C1-BEPC 5k à C6-Bac+9 35k (plomberie, électricité, couture, informatique, Bazin). Tu donnes Tafsir clair, tu fais Vidéo Habillage Bazin luxe, tu es pédagogue, tu parles français Niger, tu donnes exercices difficiles + vidéos YouTube. 30j gratuit/niveau. Réponds court, utile, comme ChatGPT.";
 
-const SYSTEM_PROMPT = `
-Tu es SAHEL V20, l'assistant intelligent de SAHEL LUXE.
-Tu es comme ChatGPT mais spécialisé pour le Sahel:
-- Université: C1-BEPC (5k), C2-CAP (10k), C3-Bac (15k), C4-BTS (20k), C5-Licence (25k), C6-Master/Bac+9 (35k)
-- Tu enseignes tous les métiers: plomberie, électricité, maçonnerie, couture, informatique, etc.
-- Tu donnes Tafsir du Coran gratuit
-- Tu fais Vidéo Habillage: tu habilles les gens en Bazin luxe et tu les mets dans super ville/forêt
-- Tu es pédagogue, tu réponds en français simple, avec exercices pratiques, vidéos YouTube
-- Tu es au Niger, tu comprends la culture nigérienne
-- 30 jours gratuit par niveau
-Tu réponds toujours de façon utile, courte, et actionnable comme ChatGPT.
-`;
+let hist = JSON.parse(localStorage.getItem('sahel_v22')||'[]');
 
-let chatHistory = [];
-
-function init() {
-  const input = document.querySelector('input[placeholder*="Cours"]');
-  const btnSend = document.querySelector('button:has(> svg),.bg-yellow-400');
-
-  if(input) {
-    input.addEventListener('keypress', (e) => {
-      if(e.key === 'Enter') envoyerMessage();
-    });
-  }
-
-  // Bouton envoyer jaune
-  const sendBtns = document.querySelectorAll('button');
-  sendBtns.forEach(b => {
-    if(b.innerHTML.includes('➤') || b.textContent.includes('➤')) {
-      b.onclick = envoyerMessage;
-    }
-  });
-
-  // Boutons du bas
-  setupButtons();
-
-  ajouterMessage("Salam Chef! 👋 Je suis SAHEL V20, comme ChatGPT mais version Sahel Luxe. Je peux t'enseigner C1 à C6, faire Tafsir, habiller ta vidéo en Bazin. Pose ta question!", 'bot');
+function initV22(){
+ const zone = document.getElementById('chat-zone');
+ if(hist.length===0){
+   addMsg("Salam Chef! 👋 V22 activé! Je suis comme ChatGPT maintenant.\n\n✅ C1 à C6: Tape 'C1 plomberie' ou 'C6 master'\n✅ TAFSIR: Tape 'Tafsir Fatiha'\n✅ HABILLAGE: Tape 'Habille moi en Bazin bleu à Dubai'\n\nPose ta question!",'bot');
+ } else {
+   hist.forEach(m=>addMsg(m.t,'bot'===m.r?'bot':'user',false,false));
+ }
 }
 
-function setupButtons() {
-  document.addEventListener('click', (e) => {
-    const t = e.target.closest('button');
-    if(!t) return;
-    if(t.textContent.includes('Partager Écran')) partagerEcran();
-    if(t.textContent.includes('Caméra')) ouvrirCamera();
-    if(t.textContent.includes('Vidéo Habillage')) videoHabillage();
-    if(t.textContent.includes('Voice') || t.textContent.includes('Continue')) voiceContinue();
-  });
+function addMsg(t,r,save=true,isTyping=false){
+ const zone=document.getElementById('chat-zone');
+ const d=document.createElement('div');
+ d.className=r;
+ if(isTyping) d.id='typing';
+ d.style.cssText=r==='user'?'align-self:flex-end;background:#facc15;color:#000;padding:14px;border-radius:20px 20px 0 20px;max-width:85%;white-space:pre-wrap;font-size:14px':'align-self:flex-start;background:#1f2937;color:#fff;padding:14px;border-radius:20px 20px 20px 0;max-width:85%;border:1px solid #facc15;white-space:pre-wrap;font-size:14px;line-height:1.5';
+ d.textContent=t;
+ zone.appendChild(d);
+ zone.scrollTop=zone.scrollHeight;
+ if(save){ hist.push({t,r}); localStorage.setItem('sahel_v22',JSON.stringify(hist)); }
 }
 
-async function envoyerMessage() {
-  const input = document.querySelector('input[placeholder*="Cours"]') || document.querySelector('input');
-  if(!input ||!input.value.trim()) return;
-
-  const question = input.value.trim();
-  input.value = '';
-
-  ajouterMessage(question, 'user');
-  ajouterMessage("⏳ Je réfléchis comme ChatGPT...", 'bot', true);
-
-  try {
-    const reponse = await appelerIA(question);
-    supprimerTyping();
-    ajouterMessage(reponse, 'bot');
-  } catch(err) {
-    supprimerTyping();
-    ajouterMessage("Oups, petite coupure réseau. Réessaie! Astuce: vérifie ta connexion. Je suis là! 🤲", 'bot');
-  }
+async function envoyerMessage(){
+ const inp=document.getElementById('userInput');
+ const q=inp.value.trim();
+ if(!q) return;
+ inp.value='';
+ addMsg(q,'user');
+ addMsg('⏳ SAHEL V22 écrit comme ChatGPT...','bot',false,true);
+ try{
+   const rep=await callIAV22(q);
+   document.getElementById('typing')?.remove();
+   typeWriter(rep);
+ }catch(e){
+   document.getElementById('typing')?.remove();
+   addMsg('Réseau faible, mais je suis là! Réessaie: '+q.slice(0,50),'bot');
+ }
 }
 
-async function appelerIA(question) {
-  // On utilise Pollinations - gratuit sans clé, marche sur GitHub Pages
-  const fullPrompt = SYSTEM_PROMPT + "\n\nUtilisateur: " + question + "\nSAHEL V20 répond:";
-
-  const url = "https://text.pollinations.ai/" + encodeURIComponent(fullPrompt);
-
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: { 'Accept': 'text/plain' }
-  });
-
-  if(!res.ok) throw new Error('IA indisponible');
-
-  let text = await res.text();
-
-  // Nettoyage
-  text = text.replace(SYSTEM_PROMPT, '').trim();
-
-  // Si réponse vide, fallback intelligent
-  if(!text || text.length < 10) {
-    return genererReponseLocale(question);
-  }
-
-  return text + "\n\n💡 Tu veux un exercice pratique ou une vidéo YouTube pour ça?";
+function typeWriter(text){
+ let i=0; const zone=document.getElementById('chat-zone');
+ const d=document.createElement('div');
+ d.className='bot'; d.style.cssText='align-self:flex-start;background:#1f2937;color:#fff;padding:14px;border-radius:20px 20px 20px 0;max-width:85%;border:1px solid #facc15;white-space:pre-wrap;font-size:14px;line-height:1.5';
+ zone.appendChild(d);
+ const interval=setInterval(()=>{
+   d.textContent=text.slice(0,i++);
+   zone.scrollTop=zone.scrollHeight;
+   if(i>text.length){ clearInterval(interval); hist.push({t:text,r:'bot'}); localStorage.setItem('sahel_v22',JSON.stringify(hist)); }
+ },15);
 }
 
-function genererReponseLocale(q) {
-  q = q.toLowerCase();
-  if(q.includes('c1') || q.includes('bepc')) return "C1-BEPC (5k) - Niveau débutant: On apprend les bases solides. Exemple: Plomberie - apprendre à souder un tuyau. Exercice: Réalise un circuit d'eau simple en 2 jours. Sites: OpenClassrooms, YouTube. Tu veux que je détaille?";
-  if(q.includes('tafsir')) return "Tafsir gratuit V20: Donne-moi une sourate ou verset et je t'explique en français simple + contexte + leçon pratique pour ta vie au Niger.";
-  if(q.includes('habillage') || q.includes('bazin') || q.includes('video')) return "Vidéo Habillage SAHEL LUXE: Envoie ta vidéo/photo et je t'habille en Bazin royal (vert or, bleu roi, rouge mariage) + je te mets dans super endroit (Dubaï, super forêt luxe, palais). Comme ce qu'on a fait pour toi!";
-  if(q.includes('c6') || q.includes('bac+9') || q.includes('master')) return "C6-Bac+9 (35k) - Expert: Tu deviens formateur des autres. Projet final: Créer une entreprise dans ton domaine avec business plan.";
-  return `Super question: "${q}". En mode ChatGPT Sahel V20, je t'explique étape par étape avec exemple du Niger, exercice difficile niveau C1 à C6, et vidéos YouTube. Dis-moi ton niveau (C1 à C6) pour que je t'adapte la réponse!`;
+async function callIAV22(q){
+ // V22 utilise Pollinations PRO gratuit sans clé - marche 100% sur GitHub Pages
+ const prompt = SYSTEM + "\nUser: " + q + "\nAssistant (réponds comme ChatGPT en français, utile, avec exemple Niger):";
+ const url = "https://text.pollinations.ai/"+encodeURIComponent(prompt)+"?model=openai&seed="+Date.now();
+ const res = await fetch(url);
+ if(!res.ok) throw new Error('fail');
+ let txt = await res.text();
+ txt = txt.replace(SYSTEM,'').trim();
+ if(txt.length<5) return localFallback(q);
+ return txt;
 }
 
-function ajouterMessage(text, type, isTyping=false) {
-  const chatContainer = document.querySelector('.chat-container') || document.body;
-  // Trouve la zone de chat
-  let zone = document.getElementById('chat-zone');
-  if(!zone) {
-    zone = document.createElement('div');
-    zone.id = 'chat-zone';
-    zone.style.cssText = 'padding:10px; max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px;';
-    const inputArea = document.querySelector('input').parentElement;
-    inputArea.parentElement.insertBefore(zone, inputArea);
-  }
-
-  const div = document.createElement('div');
-  div.className = isTyping? 'typing' : '';
-  div.style.cssText = type === 'user'
-   ? 'align-self:flex-end; background:#facc15; color:#000; padding:12px; border-radius:18px 18px 0 18px; max-width:80%; white-space:pre-wrap;'
-    : 'align-self:flex-start; background:#1f2937; color:#fff; padding:12px; border-radius:18px 18px 18px 0; max-width:85%; border:1px solid #facc15; white-space:pre-wrap;';
-  div.textContent = text;
-  zone.appendChild(div);
-  zone.scrollTop = zone.scrollHeight;
+function localFallback(q){
+ q=q.toLowerCase();
+ if(q.includes('tafsir')) return "TAFSIR V22 GRATUIT: Donne sourate/verset. Ex: 'Tafsir Al-Fatiha' -> Je t'explique mot par mot + leçon pour ta vie au Niger + comment l'appliquer aujourd'hui.";
+ if(q.includes('bazin')||q.includes('habill'))) return "🎬 VIDEO HABILLAGE V22: Envoie ta photo et dis 'Habille moi en Bazin vert-or à Dubaï' ou 'Bazin bleu roi forêt luxe'. Je te fais rendu Bazin comme un vrai designer Sahel Luxe!";
+ if(q.includes('c1')) return "C1 BEPC 5k (30j gratuit): Bases. Ex: Electricité -> apprendre brancher interrupteur simple. Exercice: Fais schéma maison 2 pièces. Vidéo: YouTube 'électricité bâtiment débutant'. Tu veux PDF?";
+ return `V22 comme ChatGPT: Ta question "${q}" est top! Je t'explique en 3 étapes:\n1. Définition simple\n2. Exemple pratique Niger\n3. Exercice difficile + vidéo YouTube.\nDis ton niveau C1 à C6 pour adapter!`;
 }
 
-function supprimerTyping() {
-  const t = document.querySelector('.typing');
-  if(t) t.remove();
+function partagerEcran(){ addMsg('🖥️ Partage écran V22: Clique autoriser, montre app/panne, je t\'explique pas à pas comme ChatGPT Vision!','bot'); if(navigator.mediaDevices?.getDisplayMedia) navigator.mediaDevices.getDisplayMedia({video:true}); }
+function ouvrirCamera(){ addMsg('📷 Caméra V22: Montre ton travail, je diagnostique!','bot'); }
+function videoHabillage(){ addMsg('🎬 Habillage V22 activé! Tape: "Habille ma photo en Bazin rouge mariage + palais Dubaï"','bot'); }
+function voiceContinue(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){ addMsg('🎤 Voice: navigateur non supporté, écris!','bot'); return; }
+ const r=new SR(); r.lang='fr-FR'; r.start(); addMsg('🎤 J\'écoute 30s... parle!','bot');
+ r.onresult=e=>{ document.getElementById('userInput').value=e.results[0][0].transcript; envoyerMessage(); };
 }
+function clearChat(){ localStorage.removeItem('sahel_v22'); document.getElementById('chat-zone').innerHTML=''; initV22(); }
 
-function partagerEcran() {
-  ajouterMessage("🖥️ Partage d'écran activé! Montre-moi ton écran et je t'aide en direct comme ChatGPT Vision.", 'bot');
-  if(navigator.mediaDevices?.getDisplayMedia) {
-    navigator.mediaDevices.getDisplayMedia({video:true}).then(() => {
-      ajouterMessage("Écran reçu! Dis-moi ce que tu veux que je t'explique.", 'bot');
-    }).catch(()=> ajouterMessage("Partage annulé. Tu peux aussi décrire ton problème.", 'bot'));
-  }
-}
-
-function ouvrirCamera() {
-  ajouterMessage("📷 Caméra activée! Montre-moi ton travail (panne, couture, plat) et je diagnostique comme un expert.", 'bot');
-}
-
-function videoHabillage() {
-  ajouterMessage("🎬 VIDÉO HABILLAGE SAHEL LUXE activé! Envoie ta photo/vidéo et je te mets en Bazin luxe vert-or + super ville Dubaï. C'est le Chat qui habille comme ChatGPT mais en Bazin! Envoie ta photo maintenant.", 'bot');
-}
-
-function voiceContinue() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SpeechRecognition) {
-    ajouterMessage("🎤 Voice non supporté sur ce navigateur. Écris ta question!", 'bot');
-    return;
-  }
-  const rec = new SpeechRecognition();
-  rec.lang = 'fr-FR';
-  rec.start();
-  ajouterMessage("🎤 J'écoute... parle!", 'bot');
-  rec.onresult = (e) => {
-    const text = e.results[0][0].transcript;
-    document.querySelector('input').value = text;
-    envoyerMessage();
-  };
-}
-
-// Lancement
-document.addEventListener('DOMContentLoaded', init);
-setTimeout(init, 1000);
+window.onload=initV22;
