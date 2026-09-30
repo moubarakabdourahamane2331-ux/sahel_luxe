@@ -1,0 +1,16 @@
+{
+  "name": "SAHEL LUXE Tahoua",
+  "short_name": "SAHEL LUXE",
+  "description": "TikTok + WhatsApp Vocal + Video + Statut 24h + Shop Bazin - Tahoua 97028392",
+  "start_url": "/sahel_luxe/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FFD700",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/5968/5968841.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
